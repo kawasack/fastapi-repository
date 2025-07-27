@@ -4,10 +4,12 @@ from typing import Union
 import motor.motor_asyncio
 from bson import ObjectId 
 from auth_utils import AuthJwtCsrf
+import asyncio
 
 MONGO_API_KEY = config("MONGO_API_KEY")
 
 client = motor.motor_asyncio.AsyncIOMotorClient(MONGO_API_KEY)
+client.get_io_loop = asyncio.get_event_loop  
 # client = motor.motor_asyncio.AsyncIOMotorClient(MONGO_API_KEY, tlsCAFile=certifi.where())
 
 database = client.API_DB
