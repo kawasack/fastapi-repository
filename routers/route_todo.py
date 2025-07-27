@@ -65,3 +65,4 @@ async def delete_todo(request:Request,response:Response,id: str, csrf_protect: C
         return {"message": "Successfully deleted"}
     raise HTTPException(status_code = 404,detail=f"Delete task failed")
 
+
