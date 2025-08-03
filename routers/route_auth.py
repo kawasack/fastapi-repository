@@ -13,7 +13,7 @@ router = APIRouter()
 auth = AuthJwtCsrf()
 
 
-@router.get("/api/register",response_model=Csrf)
+@router.get("/api/csrftoken",response_model=Csrf)
 def get_csrf_token(csrf_protect: CsrfProtect = Depends()):
     csrf_token = csrf_protect.get_csrf_token()
     res =  {"csrf_token": csrf_token}
