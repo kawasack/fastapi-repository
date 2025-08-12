@@ -8,17 +8,18 @@ from database import (
 )
 from auth_utils import AuthJwtCsrf
 from fastapi_csrf_protect import CsrfProtect
+from fastapi.responses import JSONResponse
 
 router = APIRouter()
 auth = AuthJwtCsrf()
 
 
-@router.get("/api/csrftoken",response_model=Csrf)
+@router.get("/api/csrftoken", response_model=Csrf)
 def get_csrf_token(csrf_protect: CsrfProtect = Depends()):
-    csrf_token = csrf_protect.generate_csrf()
-    res =  {"csrf_token": csrf_token}
-    return res
-
+    unsigned_token, signed_token = csrf_protect.generate_csrf_tokens()
+    response = JSONResponse(content={"csrf_token": unsigned_token})
+    csrf_protect.set_csrf_cookie(signed_token, response)
+    return response
 
 
 @router.post("/api/register",response_model=UserInfo)
@@ -37,7 +38,7 @@ async def login(request:Request,response:Response,user:UserBody, csrf_protect: C
     user = jsonable_encoder(user)
     token = await db_login(user)
     response.set_cookie(
-        key="accesss_token",
+        key="access_token",
         value=f"Bearer{token}",
         httponly=True,
         samesite="none",
